@@ -7,10 +7,30 @@
 void print_int(int value) { printf("%u", value); }
 
 int main(int argc, char *argv[]) {
-  srand(time(0));
+
+  if (!argv[1]) {
+    printf("ERROR: include height.\n");
+    return -1;
+  }
+  if (!argv[2]) {
+    printf("ERROR: include width.\n");
+    return -1;
+  }
 
   int height = atoi(argv[1]);
   int width = atoi(argv[2]);
+
+  if (height < 1) {
+    printf("ERROR: height > 0\n");
+    return -1;
+  }
+
+  if (width < 1) {
+    printf("ERROR: width > 0\n");
+    return -1;
+  }
+
+  srand(time(0));
   int walls_count = ((width - 1) * height) + (width * (height - 1));
 
   dyn_array_t<disjoint_set_t *> *cells =
