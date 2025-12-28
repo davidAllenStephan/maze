@@ -1,10 +1,13 @@
 #include "../include/dyn_array.hpp"
+#include "../include/matrix.hpp"
+#include <cstdio>
 extern "C" {
 #include "../include/disjoint_set.h"
-#include "../include/matrix.h"
 }
 #include <stdlib.h>
 #include <time.h>
+
+void print_int(int value) { printf("%u", value); }
 
 int main(int argc, char *argv[]) {
   srand(time(0));
@@ -49,7 +52,9 @@ int main(int argc, char *argv[]) {
     count++;
   }
 
-  matrix_t *matrix = matrix_init((height * 2) - 1, (width * 2) - 1);
+  printf("Got here\n");
+
+  matrix_t<int> *matrix = matrix_init<int>((height * 2) - 1, (width * 2) - 1);
   int walls_index = 0;
   for (int i = 0; i < matrix->height; i++) {
     for (int j = 0; j < matrix->width; j++) {
@@ -73,9 +78,9 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  matrix_print(matrix);
-
+  matrix_print(matrix, print_int);
   matrix_free(matrix);
+
   dyn_array_free(cells, disjoint_set_free);
   free(walls);
 

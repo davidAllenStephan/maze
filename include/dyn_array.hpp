@@ -20,7 +20,7 @@ template <typename T> struct dyn_array_t {
 template <typename T> dyn_array_t<T> *dyn_array_init(int capacity) {
   dyn_array_t<T> *array =
       static_cast<dyn_array_t<T> *>(malloc(sizeof(dyn_array_t<T>)));
-  array->array = static_cast<T *>(malloc(sizeof(T) * capacity));
+  array->array = static_cast<T *>(malloc(sizeof(T *) * capacity));
   array->size = 0;
   array->capacity = capacity;
   return array;
