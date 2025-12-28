@@ -1,13 +1,11 @@
-// disjoint_set.c
+// disjoint_set.cpp
 // Created by David Marino
-// Date: 12/26/25
+// Date: 12/28/25
 
-#include "../include/disjoint_set.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "../include/disjoint_set.hpp"
 
 disjoint_set_t *disjoint_set_make_set() {
-  disjoint_set_t *set = malloc(sizeof(disjoint_set_t));
+  disjoint_set_t *set = (disjoint_set_t *)malloc(sizeof(disjoint_set_t));
   set->parent = set;
   set->size = 1;
   return set;
@@ -30,7 +28,7 @@ int disjoint_set_union(disjoint_set_t *a, disjoint_set_t *b) {
   }
   a->parent = b;
   b->size = b->size + a->size;
-  return 1;
+  return -1;
 }
 
 void disjoint_set_free(disjoint_set_t *set) { free(set); }

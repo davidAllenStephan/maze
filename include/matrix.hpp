@@ -1,4 +1,4 @@
-// matrix.h
+// matrix.hpp
 // Created by David Marino
 // Date: 12/26/25
 

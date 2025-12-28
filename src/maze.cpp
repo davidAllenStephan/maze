@@ -1,9 +1,6 @@
 #include "../include/dyn_array.hpp"
 #include "../include/matrix.hpp"
-#include <cstdio>
-extern "C" {
-#include "../include/disjoint_set.h"
-}
+#include "../include/disjoint_set.hpp"
 #include <stdlib.h>
 #include <time.h>
 
@@ -51,8 +48,6 @@ int main(int argc, char *argv[]) {
     }
     count++;
   }
-
-  printf("Got here\n");
 
   matrix_t<int> *matrix = matrix_init<int>((height * 2) - 1, (width * 2) - 1);
   int walls_index = 0;
