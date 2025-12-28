@@ -1,6 +1,6 @@
+#include "../include/disjoint_set.hpp"
 #include "../include/dyn_array.hpp"
 #include "../include/matrix.hpp"
-#include "../include/disjoint_set.hpp"
 #include <stdlib.h>
 #include <time.h>
 

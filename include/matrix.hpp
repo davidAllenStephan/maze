@@ -2,13 +2,12 @@
 // Created by David Marino
 // Date: 12/26/25
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
 
-#include <cstddef>
+#include <cstdio>
 #include <cstdlib>
-#include <stdio.h>
-#include <stdlib.h>
+#include <type_traits>
 
 template <typename T> struct matrix_t {
   T **matrix;
@@ -16,40 +15,41 @@ template <typename T> struct matrix_t {
   int width;
 };
 
-// Initilizes matrix.
-// @param height
-// @param width
-// @return pointer to matrix on success, NULL on fail.
 template <typename T> matrix_t<T> *matrix_init(int height, int width) {
-  if (height < 0) {
-    return NULL;
-  }
-  if (width < 0) {
-    return NULL;
+  if (height < 0 || width < 0) {
+    return nullptr;
   }
   matrix_t<T> *matrix = static_cast<matrix_t<T> *>(malloc(sizeof(matrix_t<T>)));
+  if (!matrix) {
+    return nullptr;
+  }
   matrix->height = height;
   matrix->width = width;
-  matrix->matrix = static_cast<T **>(malloc(sizeof(T **) * height));
-  for (int i = 0; i < width; i++) {
-    matrix->matrix[i] = static_cast<T *>(malloc(sizeof(T *) * width));
+  matrix->matrix = static_cast<T **>(malloc(sizeof(T *) * height));
+  if (!matrix->matrix) {
+    free(matrix);
+    return nullptr;
   }
-  if (!matrix) {
-    return NULL;
+  for (int i = 0; i < height; i++) {
+    matrix->matrix[i] = static_cast<T *>(malloc(sizeof(T) * width));
+    if (!matrix->matrix[i]) {
+      for (int j = 0; j < i; j++) {
+        free(matrix->matrix[j]);
+      }
+      free(matrix->matrix);
+      free(matrix);
+      return nullptr;
+    }
   }
+
   return matrix;
 }
-
-// Frees matrix.
-// @param matrix
-// @param desc
 
 template <typename T>
 void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   if (!matrix) {
     return;
   }
-
   if (desc) {
     for (int i = 0; i < matrix->height; i++) {
       for (int j = 0; j < matrix->width; j++) {
@@ -63,58 +63,41 @@ void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   for (int i = 0; i < matrix->height; i++) {
     free(matrix->matrix[i]);
   }
-
   free(matrix->matrix);
   free(matrix);
 }
 
-// Sets value at index in matrix.
-// @param matrix
-// @param y
-// @param x
-// @param value
-// @return fail < 0 <= success
 template <typename T>
-int matrix_set(matrix_t<T> *matrix, int y, int x, int value) {
-  if (!matrix) {
-    return -1;
-  }
-  if (value < 0) {
-    return -1;
-  }
-  if (y < 0) {
-    return -1;
-  }
-  if (x < 0) {
+int matrix_set(matrix_t<T> *matrix, int y, int x, T value) {
+  if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
     return -1;
   }
   matrix->matrix[y][x] = value;
-  return value;
+  return 0;
 }
 
-// Gets value at index in matrix.
-// @param matrix
-// @param y
-// @param x
-// @return T, NULL on error
-template <typename T> T matrix_get(matrix_t<T> *matrix, int y, int x) {
-  if (!matrix) {
-    return NULL;
-  }
-  if (y < 0) {
-    return NULL;
-  }
-  if (x < 0) {
-    return NULL;
+template <typename T>
+typename std::enable_if<std::is_pointer<T>::value, T>::type
+matrix_get(matrix_t<T> *matrix, int y, int x) {
+  if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
+    return nullptr;
   }
   return matrix->matrix[y][x];
 }
 
-// Prints matrix to stdout.
-// @param matrix
-// @param height
-// @param width
+template <typename T>
+typename std::enable_if<!std::is_pointer<T>::value, T>::type
+matrix_get(matrix_t<T> *matrix, int y, int x) {
+  if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
+    return static_cast<T>(-1);
+  }
+  return matrix->matrix[y][x];
+}
+
 template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
+  if (!matrix || !print) {
+    return;
+  }
   for (int i = 0; i < matrix->height; i++) {
     for (int j = 0; j < matrix->width; j++) {
       print(matrix->matrix[i][j]);
@@ -124,18 +107,15 @@ template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
   }
 }
 
-// Checks if each element is set in matrix.
-// @param matrix
-// @return not full < 0 <= full
 template <typename T> int matrix_isFull(matrix_t<T> *matrix) {
-  for (int i = 0; i < matrix->height; i++) {
-    for (int j = 0; j < matrix->width; j++) {
-      if (matrix->matrix[i][j] == NULL) {
-        return 0;
-      }
-    }
+  if (!matrix) {
+    return 0;
   }
-  return 1;
+  for (int i = 0; i < matrix->height; i++)
+    for (int j = 0; j < matrix->width; j++)
+      if (!matrix->matrix[i][j])
+        return -1;
+  return 0;
 }
 
 #endif
