@@ -5,6 +5,7 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <type_traits>
@@ -15,6 +16,10 @@ template <typename T> struct matrix_t {
   int width;
 };
 
+// Initilizes matrix.
+// @param height
+// @param width
+// @return matrix_t<T> pointer
 template <typename T> matrix_t<T> *matrix_init(int height, int width) {
   if (height < 0 || width < 0) {
     return nullptr;
@@ -45,6 +50,9 @@ template <typename T> matrix_t<T> *matrix_init(int height, int width) {
   return matrix;
 }
 
+// Frees matrix.
+// @param matrix
+// @param desc
 template <typename T>
 void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   if (!matrix) {
@@ -67,6 +75,11 @@ void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   free(matrix);
 }
 
+// Sets to value at index in matrix.
+// @param matrix
+// @param y row
+// @param x col
+// @return failure < 0 <= success.
 template <typename T>
 int matrix_set(matrix_t<T> *matrix, int y, int x, T value) {
   if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
@@ -76,6 +89,11 @@ int matrix_set(matrix_t<T> *matrix, int y, int x, T value) {
   return 0;
 }
 
+// Gets value at index in matrix (pointer).
+// @param matrix
+// @param y row
+// @param x col
+// @return nullpointer == error || value == success.
 template <typename T>
 typename std::enable_if<std::is_pointer<T>::value, T>::type
 matrix_get(matrix_t<T> *matrix, int y, int x) {
@@ -85,15 +103,23 @@ matrix_get(matrix_t<T> *matrix, int y, int x) {
   return matrix->matrix[y][x];
 }
 
+// Gets value at index in matrix (static).
+// @param matrix
+// @param y row
+// @param x col
+// @return INTMAX_MAX == error || value == success.
 template <typename T>
 typename std::enable_if<!std::is_pointer<T>::value, T>::type
 matrix_get(matrix_t<T> *matrix, int y, int x) {
   if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
-    return static_cast<T>(-1);
+    return static_cast<T>(INTMAX_MAX);
   }
   return matrix->matrix[y][x];
 }
 
+// Prints the matrix.
+// @param matrix
+// @param print
 template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
   if (!matrix || !print) {
     return;
@@ -107,6 +133,9 @@ template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
   }
 }
 
+// Checks if the matrix is full.
+// @param matrix
+// @return failure < 0 <= success.
 template <typename T> int matrix_isFull(matrix_t<T> *matrix) {
   if (!matrix) {
     return 0;
