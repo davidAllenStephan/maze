@@ -130,4 +130,23 @@ void dyn_array_free(dyn_array_t<T> *array, void (*desc)(T) = nullptr) {
   free(array);
 }
 
+// Checks if element is contained in array.
+// @param array
+// @param element
+// @param cmp
+// @return error < 0 == not found < found
+template <typename T>
+int dyn_array_contains(dyn_array_t<T> *array, T element,
+                       void (*cmp)(T) = nullptr) {
+  if (!array) {
+    return -1;
+  }
+  for (int i = 0; i < array->size; i++) {
+    if (array->array == element) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 #endif

@@ -4,33 +4,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-void print_int(int value) { printf("%u", value); }
+void kruskal_print(int value) { printf("%u ", value); }
 
-int main(int argc, char *argv[]) {
-
-  if (!argv[1]) {
-    printf("ERROR: include height.\n");
-    return -1;
-  }
-  if (!argv[2]) {
-    printf("ERROR: include width.\n");
-    return -1;
-  }
-
-  int height = atoi(argv[1]);
-  int width = atoi(argv[2]);
-
-  if (height < 1) {
-    printf("ERROR: height > 0\n");
-    return -1;
-  }
-
-  if (width < 1) {
-    printf("ERROR: width > 0\n");
-    return -1;
-  }
-
+matrix_t<int> *kruskal_run(int height, int width) {
   srand(time(0));
+
   int walls_count = ((width - 1) * height) + (width * (height - 1));
 
   dyn_array_t<disjoint_set_t *> *cells =
@@ -55,14 +33,14 @@ int main(int argc, char *argv[]) {
       int index1 = (a * width) + b;
       int index2 = (a * width) + (b + 1);
       int res = disjoint_set_union(cells->array[index1], cells->array[index2]);
-      if (res == 1) {
+      if (res == -1) {
         walls->array[z] = 1;
       }
     } else {
       int index1 = (a * width) + (b - even_walls);
       int index2 = ((a + 1) * width) + (b - even_walls);
       int res = disjoint_set_union(cells->array[index1], cells->array[index2]);
-      if (res == 1) {
+      if (res == -1) {
         walls->array[z] = 1;
       }
     }
@@ -77,14 +55,14 @@ int main(int argc, char *argv[]) {
         if (j % 2 == 1) {
           matrix_set(matrix, i, j, 1);
         } else {
-          if (walls->array[walls_index] == 1) {
+          if (walls->array[walls_index] == 0) {
             matrix_set(matrix, i, j, 1);
           }
           walls_index++;
         }
       } else {
         if (j % 2 == 1) {
-          if (walls->array[walls_index] == 1) {
+          if (walls->array[walls_index] == 0) {
             matrix_set(matrix, i, j, 1);
           }
           walls_index++;
@@ -93,11 +71,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  matrix_print(matrix, print_int);
-  matrix_free(matrix);
-
   dyn_array_free(cells, disjoint_set_free);
   free(walls);
 
-  return 0;
+  return matrix;
 }
