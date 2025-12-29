@@ -22,6 +22,7 @@ set(SOURCES
     src/dyn_array.cpp
     src/kruskals.cpp
     src/matrix.cpp
+    src/window.cpp
 )
 
 add_library(maze OBJECT ${SOURCES})

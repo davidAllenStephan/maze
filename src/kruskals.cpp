@@ -33,14 +33,14 @@ matrix_t<int> *kruskal_run(int height, int width) {
       int index1 = (a * width) + b;
       int index2 = (a * width) + (b + 1);
       int res = disjoint_set_union(cells->array[index1], cells->array[index2]);
-      if (res == -1) {
+      if (res == 0) {
         walls->array[z] = 1;
       }
     } else {
       int index1 = (a * width) + (b - even_walls);
       int index2 = ((a + 1) * width) + (b - even_walls);
       int res = disjoint_set_union(cells->array[index1], cells->array[index2]);
-      if (res == -1) {
+      if (res == 0) {
         walls->array[z] = 1;
       }
     }
