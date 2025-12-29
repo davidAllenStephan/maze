@@ -1,6 +1,9 @@
-// matrix.hpp
-// Created by David Marino
-// Date: 12/26/25
+/**
+ * @file matrix.hpp
+ * @brief 2D Matrix utility class
+ *
+ * Provides a 2D Matrix data structure.
+ */
 
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
@@ -10,16 +13,28 @@
 #include <cstdlib>
 #include <type_traits>
 
+/**
+ * @brief Generic 2D Matrix data structure
+ *
+ * @tparam T Type of elements
+ */
 template <typename T> struct matrix_t {
-  T **matrix;
-  int height;
-  int width;
+  T **matrix; /**< data */
+  int height; /**< rows */
+  int width;  /**< columns */
 };
 
-// Initilizes matrix.
-// @param height
-// @param width
-// @return matrix_t<T> pointer
+/**
+ * @brief Initializes a new matrix
+ *
+ * @tparam T Type of elements
+ * @param height
+ * @param width
+ * @return Pointer to new matrix
+ * @retval nullptr height less than 0
+ * @retval nullptr width less than 0
+ * @retval nullptr Memory allocation failure
+ */
 template <typename T> matrix_t<T> *matrix_init(int height, int width) {
   if (height < 0 || width < 0) {
     return nullptr;
@@ -50,9 +65,13 @@ template <typename T> matrix_t<T> *matrix_init(int height, int width) {
   return matrix;
 }
 
-// Frees matrix.
-// @param matrix
-// @param desc
+/**
+ * @brief Frees matrix
+ *
+ * @tparam T Type of elements
+ * @param matrix
+ * @param desc Deconstructor
+ */
 template <typename T>
 void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   if (!matrix) {
@@ -75,39 +94,63 @@ void matrix_free(matrix_t<T> *matrix, void (*desc)(T) = nullptr) {
   free(matrix);
 }
 
-// Sets to value at index in matrix.
-// @param matrix
-// @param y row
-// @param x col
-// @return failure < 0 <= success.
+/**
+ * @brief Sets to value at index in matrix
+ *
+ * @tparam T Type of elements
+ * @param matrix
+ * @param y Row
+ * @param x Column
+ * @retval 0 Success
+ * @retval -1 Null pointer passed
+ * @retval -2 Invalid arguments
+ */
 template <typename T>
 int matrix_set(matrix_t<T> *matrix, int y, int x, T value) {
-  if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
+  if (!matrix) {
     return -1;
+  }
+  if (y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
+    return -2;
   }
   matrix->matrix[y][x] = value;
   return 0;
 }
 
-// Gets value at index in matrix (pointer).
-// @param matrix
-// @param y row
-// @param x col
-// @return nullpointer == error || value == success.
+/**
+ * @brief Gets element at index (pointer)
+ *
+ * @tparam T Type of element
+ * @param matrix
+ * @param y Row
+ * @param x Column
+ * @return Element
+ * @retval nullptr Null pointer passed
+ * @retval nullptr Memory allocation failure
+ */
 template <typename T>
 typename std::enable_if<std::is_pointer<T>::value, T>::type
 matrix_get(matrix_t<T> *matrix, int y, int x) {
-  if (!matrix || y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
+  if (!matrix) {
+    return nullptr;
+  }
+  if (y < 0 || x < 0 || y >= matrix->height || x >= matrix->width) {
     return nullptr;
   }
   return matrix->matrix[y][x];
 }
 
-// Gets value at index in matrix (static).
-// @param matrix
-// @param y row
-// @param x col
-// @return INTMAX_MAX == error || value == success.
+/**
+ * @brief Gets element at index (static)
+ *
+ * @tparam T Type of element
+ * @param matrix
+ * @param y Row
+ * @param x Column
+ * @return Element
+ * @retval INTMAX_MAX Null pointer passed
+ * @retval INTMAX_MAX Memory allocation failure
+ */
 template <typename T>
 typename std::enable_if<!std::is_pointer<T>::value, T>::type
 matrix_get(matrix_t<T> *matrix, int y, int x) {
@@ -117,9 +160,13 @@ matrix_get(matrix_t<T> *matrix, int y, int x) {
   return matrix->matrix[y][x];
 }
 
-// Prints the matrix.
-// @param matrix
-// @param print
+/**
+ * @brief Prints matrix
+ *
+ * @tparam T Type of element
+ * @param matrix
+ * @param print Print function
+ */
 template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
   if (!matrix || !print) {
     return;
@@ -133,9 +180,16 @@ template <typename T> void matrix_print(matrix_t<T> *matrix, void (*print)(T)) {
   }
 }
 
-// Checks if the matrix is full.
-// @param matrix
-// @return failure < 0 <= success.
+/**
+ * @brief Checks if matrix is full
+ *
+ * @tparam T Type of element
+ * @param matrix
+ * @param print Print function
+ * @retval -1 Null pointer passed
+ * @retval 0 Matrix is full
+ * @retval 1 Matrix is not full
+ */
 template <typename T> int matrix_isFull(matrix_t<T> *matrix) {
   if (!matrix) {
     return 0;
