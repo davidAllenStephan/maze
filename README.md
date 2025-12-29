@@ -4,20 +4,19 @@
 ``` text
 .
 ├── Makefile
+├── app
+│   └── main.cpp
 ├── src
 │   ├── disjoint_set.cpp
 │   ├── dyn_array.cpp
 │   ├── kruskals.cpp
-│   ├── matrix.cpp
-│   └── window.cpp
+│   └── matrix.cpp
 └── include
     ├── disjoint_set.hpp
     ├── dyn_array.hpp
     ├── kruskals.hpp
     └── matrix.hpp
 ```
-
-Sources go in [src/](src/), header files in [include/](include/)
 
 ## Building
 
